@@ -4,7 +4,8 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
   faGithub,
   faLinkedin,
-  faMedium, faStackOverflow,
+  faMedium,
+  faStackOverflow,
 } from "@fortawesome/free-brands-svg-icons";
 import { Box, HStack } from "@chakra-ui/react";
 
@@ -15,7 +16,7 @@ const socials = [
   },
   {
     icon: faGithub,
-    url: "ttps://github.com/Moses-Adeyemi",
+    url: "https://github.com",
   },
   {
     icon: faLinkedin,
@@ -32,9 +33,28 @@ const socials = [
 ];
 
 const Header = () => {
-  const handleClick = (anchor) => () => {
+  const scrollPosition = useRef(0);
+  useEffect(()=>{
+    
+    const handleScroll = (e)=>{
+      const header = document.getElementById('header');
+      if(scrollPosition.current < window.scrollY) {
+        header.style.transform= 'translateY(-200px)';
+      } else {
+        header.style.transform = 'translateY(0)';
+      }
+      scrollPosition.current = window.scrollY;
+    }
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    }
+  }, [])
+  const handleClick = (anchor) => (e) => {
+    e.preventDefault();
     const id = `${anchor}-section`;
     const element = document.getElementById(id);
+
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",
@@ -45,6 +65,7 @@ const Header = () => {
 
   return (
     <Box
+      id="header"
       position="fixed"
       top={0}
       left={0}
@@ -54,6 +75,7 @@ const Header = () => {
       transitionDuration=".3s"
       transitionTimingFunction="ease-in-out"
       backgroundColor="#18181b"
+      zIndex="1"
     >
       <Box color="white" maxWidth="1280px" margin="0 auto">
         <HStack
@@ -62,23 +84,16 @@ const Header = () => {
           justifyContent="space-between"
           alignItems="center"
         >
-         
-          <nav style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            {socials.map((social, index) => (
-              <a href={social.url} key={index} target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon={social.icon} />
-              </a>
-            ))}
+          <nav>
+            <HStack>
+              {socials.map(social => <a key={social.url} href={social.url}><FontAwesomeIcon icon={social.icon} size="2x" /></a>)}
+            </HStack>
           </nav>
-         
           <nav>
             <HStack spacing={8}>
-              <a href="#projects-section" onClick={handleClick("projects")}>
-                Projects
-              </a>
-              <a href="#contact-section" onClick={handleClick("contact")}>
-                Contact me
-              </a>
+              {/* Add links to Projects and Contact me section */}
+              <a href="/#projects" onClick={handleClick("projects")}>Projects</a>
+              <a href="/#contact-me" onClick={handleClick("contactme")}>Contact me</a>
             </HStack>
           </nav>
         </HStack>
@@ -86,5 +101,4 @@ const Header = () => {
     </Box>
   );
 };
-
 export default Header;
